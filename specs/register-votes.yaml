@@ -1,0 +1,61 @@
+asyncapi: 2.1.0
+id: "urn:io.apirator.vote.register"
+info:
+  title: Voting application
+  version: '0.0.1'
+defaultContentType: application/json
+
+channels:
+  user/voting:
+    description: "Register vote intention"
+    publish:
+      message:
+        $ref: "#/components/messages/voteIntention"
+        bindings:
+          http:
+            type: request
+            method: POST
+        headers:
+          type: object
+          properties:
+            content-type:
+              type: string
+              enum:
+                - "application/cloudevents+json; charset=UTF-8"
+      summary: "Register vote intention"
+      operationId: voting
+
+components:
+  messages:
+    voteIntention:
+      name: Vote Intention
+      title: Vote Intention for polls
+      summary: It contains information about vote intention
+      contentType: "application/cloudevents+json; charset=UTF-8"
+      payload:
+        $ref: "#/components/schemas/voteIntentionPayload"
+  schemas:
+    voteIntentionPayload:
+      type: object
+      allOf:
+        - $ref: "https://raw.githubusercontent.com/cloudevents/spec/v1.0.1/spec.json"
+      properties:
+        data:
+          $ref: "#/components/schemas/voteIntention"
+    voteIntention:
+      type: object
+      properties:
+        pollId:
+          type: string
+        email:
+          type: string
+          format: email
+        option:
+          type: string
+        geo:
+          type: object
+          properties:
+            lat:
+              type: number
+            lon:
+              type: number
